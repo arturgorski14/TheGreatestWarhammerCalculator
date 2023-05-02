@@ -29,7 +29,7 @@ def _determine_hit_dice(strength: int, toughness: int) -> int:
         hit_dice = 3
     elif strength == toughness:
         hit_dice = 4
-    elif 2 * strength < toughness:  # niestety musi być taka kolejność
+    elif 2 * strength <= toughness:  # niestety musi być taka kolejność
         hit_dice = 6
     elif strength < toughness:
         hit_dice = 5

@@ -24,15 +24,29 @@ def test_weapon_skill_attack(weapon_skill):
     assert failure == unsuccessful_hits
 
 
-def test_attacker_hits_defender():
+@pytest.mark.parametrize(
+    "strength, toughness, expected_hits, expected_misses",
+    [
+        (20, 1, 5, 1),
+        (16, 8, 5, 1),
+        (15, 8, 4, 2),
+        (5, 4, 4, 2),
+        (4, 4, 3, 3),
+        (4, 5, 2, 4),
+        (4, 7, 2, 4),
+        (4, 8, 1, 5),
+        (1, 20, 1, 5),
+    ],
+)
+def test_attacker_hits_defender(strength, toughness, expected_hits, expected_misses):
+    dices = list(range(1, 7))
     unit_factory = UnitFactory()
-    attacker = unit_factory(strength=4)
-    defender = unit_factory(toughness=4)
-    dice_rolls = [2, 5]
+    attacker = unit_factory(strength=strength)
+    defender = unit_factory(toughness=toughness)
 
     successful_hits, unsuccessful_hits = wound_roll(
-        attacker.strength, defender.toughness, dice_rolls
+        attacker.strength, defender.toughness, dices
     )
 
-    assert successful_hits == 1
-    assert unsuccessful_hits == 1
+    assert successful_hits == expected_hits
+    assert unsuccessful_hits == expected_misses
