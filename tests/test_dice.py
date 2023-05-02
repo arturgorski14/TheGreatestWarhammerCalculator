@@ -2,26 +2,26 @@ from typing import Iterable, Union
 
 import pytest
 
-from dice import hit_roll, wound_roll
+from dice import hit_roll, save_roll, wound_roll
 from unit import UnitFactory
 
 DiceRolls = Union[int, Iterable[int]]
+dices = list(range(1, 7))
+unit_factory = UnitFactory()
 
 
 @pytest.mark.parametrize(
     "weapon_skill", [2, 3, 4, 5, 6]
 )  # weapon_skill 1 doesn't exists in warhammer40k
 def test_weapon_skill_attack(weapon_skill):
-    dices = list(range(1, 7))
-    unsuccessful_hits = weapon_skill - 1
-    successful_hits = len(dices) - unsuccessful_hits
-    unit_factory = UnitFactory()
+    expected_misses = weapon_skill - 1
+    expected_hits = len(dices) - expected_misses
     attacker = unit_factory(weapon_skill=weapon_skill)
 
     success, failure = hit_roll(attacker.weapon_skill, dices)
 
-    assert success == successful_hits
-    assert failure == unsuccessful_hits
+    assert success == expected_hits
+    assert failure == expected_misses
 
 
 @pytest.mark.parametrize(
@@ -39,8 +39,6 @@ def test_weapon_skill_attack(weapon_skill):
     ],
 )
 def test_attacker_hits_defender(strength, toughness, expected_hits, expected_misses):
-    dices = list(range(1, 7))
-    unit_factory = UnitFactory()
     attacker = unit_factory(strength=strength)
     defender = unit_factory(toughness=toughness)
 
@@ -50,3 +48,17 @@ def test_attacker_hits_defender(strength, toughness, expected_hits, expected_mis
 
     assert successful_hits == expected_hits
     assert unsuccessful_hits == expected_misses
+
+
+@pytest.mark.parametrize(
+    "save", [2, 3, 4, 5, 6]
+)  # save 1 doesn't exists in warhammer40k
+def test_save_roll(save):
+    expected_misses = save - 1
+    expected_hits = len(dices) - expected_misses
+    defender = unit_factory(save=save)
+
+    success, failure = hit_roll(defender.save, dices)
+
+    assert success == expected_hits
+    assert failure == expected_misses

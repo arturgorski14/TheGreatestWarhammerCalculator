@@ -13,6 +13,7 @@ class Unit:
     initiative: int
     attacks: int
     leadership: int
+    save: int
 
 
 class UnitFactory:
@@ -28,6 +29,7 @@ class UnitFactory:
             initiative=1,
             attacks=1,
             leadership=1,
+            save=2,
         )
 
         default_unit.update(args)

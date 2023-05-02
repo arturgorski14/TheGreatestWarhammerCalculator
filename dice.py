@@ -39,5 +39,5 @@ def _determine_hit_dice(strength: int, toughness: int) -> int:
     return hit_dice
 
 
-def save_roll():
-    pass
+def save_roll(save: int, dice_rolls: DiceRolls):
+    return hit_roll(save, dice_rolls)
