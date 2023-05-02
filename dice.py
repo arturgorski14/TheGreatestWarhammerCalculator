@@ -1,4 +1,5 @@
-from typing import Union, Iterable, Tuple
+from typing import Iterable, Tuple, Union
+
 DiceRolls = Union[int, Iterable[int]]
 
 

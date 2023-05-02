@@ -58,7 +58,7 @@ def test_save_roll(save):
     expected_hits = len(dices) - expected_misses
     defender = unit_factory(save=save)
 
-    success, failure = hit_roll(defender.save, dices)
+    success, failure = save_roll(defender.save, dices)
 
     assert success == expected_hits
     assert failure == expected_misses
