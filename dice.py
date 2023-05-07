@@ -1,6 +1,40 @@
-from typing import Iterable, Tuple, Union
+# TODO: refactor: Move dice functions to class
+
+import random
+from typing import Iterable, List, Tuple, Union
 
 DiceRolls = Union[int, Iterable[int]]
+
+
+def roll_n_times(n_attacks: int) -> List[int]:
+    dices = []
+    for _ in range(n_attacks):
+        dice = random.randint(1, 6)
+        dices.append(dice)
+    return dices
+
+
+# TODO: refactor: rerolls - code smell
+# Consider reroll using strategy pattern for different units
+def reroll_all(dice_rolls: DiceRolls) -> List[int]:
+    """
+    Assuming pre-reroll values are redundant
+    """
+    if isinstance(dice_rolls, int):
+        dice_rolls = [dice_rolls]
+    dice_rolls = roll_n_times(len(dice_rolls))
+    return dice_rolls
+
+
+def reroll_equal_and_below_threshold(
+    dice_rolls: DiceRolls, threshold: int
+) -> List[int]:
+    # TODO: better variable names
+    if isinstance(dice_rolls, int):
+        dice_rolls = [dice_rolls]
+    _dice_rolls = [value for value in dice_rolls if value > threshold]
+    to_reroll = len(dice_rolls) - len(_dice_rolls)
+    return _dice_rolls + roll_n_times(to_reroll)
 
 
 def hit_roll(hit_dice: int, dice_rolls: DiceRolls) -> Tuple[int, int]:
@@ -40,5 +74,5 @@ def _determine_hit_dice(strength: int, toughness: int) -> int:
     return hit_dice
 
 
-def save_roll(save: int, dice_rolls: DiceRolls):
+def save_roll(save: int, dice_rolls: DiceRolls) -> Tuple[int, int]:
     return hit_roll(save, dice_rolls)

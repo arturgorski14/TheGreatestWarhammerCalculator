@@ -1,13 +1,51 @@
-from typing import Iterable, Union
+from unittest.mock import patch
 
 import pytest
 
-from dice import hit_roll, save_roll, wound_roll
+from dice import (hit_roll, reroll_all, reroll_equal_and_below_threshold,
+                  roll_n_times, save_roll, wound_roll)
 from unit import UnitFactory
 
-DiceRolls = Union[int, Iterable[int]]
 dices = list(range(1, 7))
 unit_factory = UnitFactory()
+
+
+def test_roll_n_times():
+    minimum = 1
+    maximum = 6
+    attacker = unit_factory(attacks=25)
+
+    _dices = roll_n_times(attacker.attacks)
+
+    assert len(_dices) == attacker.attacks
+    assert min(_dices) == minimum
+    assert max(_dices) == maximum
+
+
+def test_reroll_single_dice():
+    _dices = 1
+    expected = 4
+
+    with patch("dice.random.randint") as rnd:
+        rnd.return_value = expected
+
+        rerolled_dices = reroll_all(_dices)
+
+        assert len(rerolled_dices) == 1
+        assert rerolled_dices == [rnd.return_value]
+        assert rerolled_dices[0] != _dices
+
+
+def test_reroll_multiple_dices():
+    _dices = [1, 1, 2, 3, 4, 5, 6]
+    expected = 3
+    threshold = 1
+    with patch("dice.random.randint") as rnd:
+        rnd.return_value = expected
+
+        dices_with_rerolled = reroll_equal_and_below_threshold(_dices, threshold)
+
+        assert sorted(dices_with_rerolled) == sorted([3, 3, 2, 3, 4, 5, 6])
 
 
 @pytest.mark.parametrize(
